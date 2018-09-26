@@ -1,0 +1,64 @@
+---
+title: "607 Project1 Hui Gracie Han Sep23"
+output: html_document
+---
+
+In this project, you're given a text file with chess tournament results where the information has some structure. Your job is to create an R Markdown file that generates a .CSV file (that could for example be imported into a SQL database) with the following information for all of the players:Player's Name, Player's State, Total Number of Points, Player's Pre-Rating, and Average Pre Chess Rating of Opponents
+```{r}
+library (stringr)
+library (readr)
+library (dplyr)
+library (tidyr)
+library (knitr)
+```
+Read Raw text data into 
+```{r}
+    TournamentRaw = readLines ("E:/tournamentinfo.txt")
+#print(TournamentRaw[1:15],)
+
+```
+Since there are seperators as ---------, we used replace function to replace - into empty space
+```{r}
+TournamentRaw2  = str_replace_all(TournamentRaw ,"-","") 
+#print(TournamentRaw2[1:15],)
+```
+# Read cleaned data into a data frame and write a temporary CSV file to better understand the data
+```{r}
+TournamentRaw3 = read.delim(textConnection(TournamentRaw2),header = F, sep = "|", stringsAsFactors = F) 
+print (TournamentRaw3)
+
+#write_csv(TournamentRaw3, "E:/TournamentRaw3.csv")
+```
+As we can see, dol11 is all NA, this column is not needed 
+```{r}
+Tournament4 = TournamentRaw3[,-11]
+print (Tournament4 [1:10], )
+```
+Remove the white space within some of the data elements, such as W   39 will become W39
+```{r}
+TournamentRow1 = trimws(as.character(Tournament4[1,] ) )
+TournamentRow1
+                        
+TournamentRow2 = trimws(as.character(Tournament4[2,]) )
+TournamentRow2
+```
+```{r}
+
+```
+Put row1 and row2 together, because they are technically the herder
+```{r}
+HeaderT = paste(TournamentRow1, TournamentRow2)
+HeaderT
+
+```
+
+```{r}
+Tournament6 = as.tbl(Tournament4[-1:-2,])
+names(Tournament6) = HeaderT
+print (Tournament6)
+
+# Tournament6 is a tibble
+write_csv(Tournament6, "E:/Tournament6.csv")
+
+
+```
